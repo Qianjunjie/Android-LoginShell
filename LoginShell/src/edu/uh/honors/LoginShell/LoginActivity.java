@@ -258,8 +258,9 @@ public class LoginActivity extends Activity {
 				}
 			}
 
-			// TODO: register the new account here.
-			return true;
+			// TODO: register the new account here. Change below return to true when
+			//registration protocol has been implemented.
+			return false;
 		}
 
 		//TODO: Replace DUMMY ID/TOKEN with actual id received from server.
