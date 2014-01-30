@@ -1,0 +1,56 @@
+This holds all the stuff I'm replacing but want for reference.
+
+From MainActivity.java
+    //Member Variables
+	//TODO: Have system load default email/id from file
+	private String mId=new String("00000");
+	private String mDefaultEmail=new String("Initialized@example.com");
+	private int mToken=00000;
+	
+	//Constants
+	private static final int LOGIN_REQUEST_CODE=11111;
+	
+	//Keys
+	public static final String EXTRA_DEFAULT_EMAIL=new String("edu.uh.honors.defaultEmail");
+	
+	//UI Elements
+	private TextView loginResults;
+	
+From MainActivity::onCreate
+	//if ID is the default then begin loginActivity
+	if((mId.equals("00000")))
+		{
+			Intent intent=new Intent(this, LoginActivity.class);
+			intent.putExtra(EXTRA_DEFAULT_EMAIL, mDefaultEmail);
+			startActivityForResult(intent, LOGIN_REQUEST_CODE);
+			
+		}
+		 
+		updateTextView();
+		
+From MainActivity
+	//process information returned from the login activity
+	protected void onActivityResult(int requestCode, int returnCode, Intent intent){
+		if(requestCode==LOGIN_REQUEST_CODE&&returnCode==RESULT_OK)
+		{
+			
+			mDefaultEmail=intent.getStringExtra(LoginActivity.EXTRA_EMAIL);
+			mId=intent.getStringExtra(LoginActivity.EXTRA_ID);
+			mToken=intent.getIntExtra(LoginActivity.EXTRA_TOKEN, 00000);
+			
+			
+		}
+	}
+
+From MainActivity
+	//updates the debugging textView on main activity
+		
+	public void updateTextView(){
+		loginResults=(TextView) findViewById(R.id.textView1);
+		loginResults.setText("Login Results:\n" +
+				"Email: "+mDefaultEmail+"\n"+
+				"ID: "+mId+"\n"+
+				"Token: "+mToken);
+	}	
+
+	

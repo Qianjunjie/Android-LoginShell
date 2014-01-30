@@ -1,78 +1,45 @@
 package edu.uh.honors.LoginShell;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
-import android.widget.TextView;
 
-
+/**
+ * This is a dummy activity designed to simulate a real application that utilizes
+ * a username/password login. 
+ * 
+ * Preconditions: Standalone.  User launches this dummy app directly. 
+ * Postcondition: Displays the results after a successful login.
+ * @author steven
+ *
+ */
 public class MainActivity extends Activity {
 	
-	//Member Variables
-	//TODO: Have system load default email/id from file
-	private String mId=new String("00000");
-	private String mDefaultEmail=new String("Initialized@example.com");
-	private int mToken=00000;
 	
-	//Constants
-	private static final int LOGIN_REQUEST_CODE=11111;
-	
-	//Keys
-	public static final String EXTRA_DEFAULT_EMAIL=new String("edu.uh.honors.defaultEmail");
-	
-	//UI Elements
-	private TextView loginResults;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_main);		
-		//check for valid id
-		if((mId.equals("00000")))
-		{
-			Intent intent=new Intent(this, LoginActivity.class);
-			intent.putExtra(EXTRA_DEFAULT_EMAIL, mDefaultEmail);
-			startActivityForResult(intent, LOGIN_REQUEST_CODE);
-			
-		}
-		 
-		updateTextView();
-				
+		setContentView(R.layout.activity_main);	
+		setupActionBar();
+						
 	}
 	
-	//check for LoginActivity return
-	 
-	 
-	protected void onActivityResult(int requestCode, int returnCode, Intent intent){
-		if(requestCode==LOGIN_REQUEST_CODE&&returnCode==RESULT_OK)
-		{
-			
-			mDefaultEmail=intent.getStringExtra(LoginActivity.EXTRA_EMAIL);
-			mId=intent.getStringExtra(LoginActivity.EXTRA_ID);
-			mToken=intent.getIntExtra(LoginActivity.EXTRA_TOKEN, 00000);
-			
-			
+	/**
+	 * Set up the {@link android.app.ActionBar}, if the API is available.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void setupActionBar() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			// Show the Up button in the action bar.
+			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
-	
-	@Override
-	public void onStart(){
-		super.onStart();
-		
-		//TODO: verify token with server
-		updateTextView();
-	}
-	
-	public void updateTextView(){
-		loginResults=(TextView) findViewById(R.id.textView1);
-		loginResults.setText("Login Results:\n" +
-				"Email: "+mDefaultEmail+"\n"+
-				"ID: "+mId+"\n"+
-				"Token: "+mToken);
-	}
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
