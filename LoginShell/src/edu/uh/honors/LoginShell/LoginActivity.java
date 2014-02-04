@@ -8,8 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
+
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -19,18 +18,12 @@ import android.widget.TextView;
  */
 public class LoginActivity extends Activity {
 	
-
-	// UI references.
-	private EditText mEmailView;
-	private EditText mPasswordView;
-	private View mLoginFormView;
-	private View mLoginStatusView;
-	private TextView mLoginStatusMessageView;
-
+	View focusView = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.activity_login);
 		setupActionBar();
 	}
@@ -70,6 +63,10 @@ public class LoginActivity extends Activity {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
+	}
+	
+	public void setFocus(View focus){
+		focusView=focus;
 	}
 
 	
