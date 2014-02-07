@@ -2,6 +2,7 @@ package edu.uh.honors.LoginShell;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,7 +18,7 @@ import android.view.Menu;
  */
 public class MainActivity extends Activity {
 	
-	
+	boolean loggedIn=false;
 	
 	
 	@Override
@@ -25,7 +26,16 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);	
 		setupActionBar();
-						
+		
+		//Start activity to be tested here.
+		if (loggedIn==false){
+			Intent intent=new Intent(this, LoginActivity.class);
+			startActivityForResult(intent, 1);
+		}
+	}
+	
+	protected void onActivityResult(){
+		loggedIn=true;
 	}
 	
 	/**

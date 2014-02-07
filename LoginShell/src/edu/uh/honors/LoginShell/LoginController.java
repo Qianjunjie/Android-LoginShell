@@ -4,21 +4,14 @@ package edu.uh.honors.LoginShell;
 
 public class LoginController {
 	//Instance Variables
-	private LoginActivity loginActivity;
 	private UserCredentials loginData= new UserCredentials();
 	private LoginView loginView;
-	private String mEmail;
-	private String mPassword;
+	private LoginActivity loginActivity;
+	public enum State{UNINITIALIZED, INITIALIZED, SUBMIT_CLICK, COMPLETE, CANCELED, FAILED};
+	private State mState=State.UNINITIALIZED;
 	
-	//Keys
-	public static final String EXTRA_ID=new String("edu.uh.honors.id");
-	public static final String EXTRA_TOKEN=new String("edu.uh.honors.token"); 
+
 	
-	//Constants
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-		"user@example.com:password", "bar@example.com:world" };
-	private static final String DUMMY_ACCESS_ID= new String("55555");
-	private static final int DUMMY_TOKEN=12345;
 	
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
@@ -26,12 +19,50 @@ public class LoginController {
 	private UserLoginTask mAuthTask = null;
 	
 	public LoginController(LoginActivity inActivity){
+		super();
 		loginActivity=inActivity;
-		loginView=new LoginView(inActivity, this, loginData);
+		
 		
 		
 	}
 	
+	/**
+	 * The main activity loop
+	 * 
+	 * @Params given enum State
+	 */
+	public void changeState(State newState){
+		mState=newState;
+
+		switch(mState){
+		case UNINITIALIZED: return;
+		case INITIALIZED: 
+		{
+			loginView=new LoginView(loginActivity, this, loginData);
+			//TODO: Import userdata from cache here.
+			break;
+		}
+		case SUBMIT_CLICK:
+		{
+			attemptLogin();break;
+		}
+		case COMPLETE:
+		{
+			proccessResult(true);break;
+		}
+		case FAILED:
+		{
+			proccessResult(false);break;
+		}
+		case CANCELED:
+		{
+			mAuthTask = null;
+			loginView.showProgress(false);
+			break;
+		}
+		}
+	}
+
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
@@ -47,26 +78,26 @@ public class LoginController {
 
 
 		// Store values at the time of the login attempt.
-		mEmail=loginView.getEmail();
-		mPassword=loginView.getPassword();
+		loginData.setEmail(loginView.getEmail());
+		loginData.setPassword(loginView.getPassword());
 
 		boolean cancel = false;
 		
 
 		// Check for a valid password.
-		if (mPassword.isEmpty()) {
+		if (loginData.getPassword().length()==0) {
 			loginView.passwordReqError();
 			cancel = true;
-		} else if (mPassword.length() < 4) {
+		} else if (loginData.getPassword().length() < 4) {
 			loginView.passwordInvalidError();
 			cancel = true;
 		}
 
 		// Check for a valid email address.
-		if (mEmail.isEmpty()) {
+		if (loginData.getEmail().length()==0) {
 			loginView.emailReqError();
 			cancel = true;
-		} else if (!mEmail.contains("@")) {
+		} else if (!loginData.getEmail().contains("@")) {
 			loginView.emailInvalidError();
 			cancel = true;
 		}
@@ -74,16 +105,34 @@ public class LoginController {
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
 			// form field with an error.
-			focusView.requestFocus();
+			loginView.resetFocus();
 		} else {
 			// Show a progress spinner, and kick off a background task to
-			// perform the user login attempt.
-			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
-			showProgress(true);
-			mAuthTask = new UserLoginTask();
+			// perform the user authentication attempt.
+			loginView.loginAnimationBegin();
+			mAuthTask = new UserLoginTask(this, loginData.getEmail(), loginData.getPassword());
 			mAuthTask.execute((Void) null);
 		}
 
+	}
+	
+	/**
+	 * If the login was successful the controller attempts to finish the login.
+	 * If login failed then set incorrectPasswordError
+	 * @param success
+	 * Contains Android Specifics
+	 */
+	 void proccessResult(boolean success){
+		mAuthTask = null;
+		loginView.showProgress(false);
+
+		if (success) {
+			loginActivity.finishLogin(loginData);
+		} else {
+			loginView.passwordIncorrectError();
+		
+		}
+	}
 	
 
 }

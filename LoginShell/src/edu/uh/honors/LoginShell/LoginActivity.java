@@ -2,12 +2,14 @@ package edu.uh.honors.LoginShell;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import edu.uh.honors.LoginShell.LoginController.State;
 
 
 /**
@@ -18,7 +20,13 @@ import android.view.View;
  */
 public class LoginActivity extends Activity {
 	
+	//Instance Variables
+	//focusView contains the view which will receive focus when resetFocus is called
 	View focusView = null;
+	LoginController loginController=new LoginController(this);
+	UserCredentials userData;
+	//Keys
+	public static final String EXTRA_USER_EMAIL=new String("edu.uh.honors.LoginActivity.userData");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,7 @@ public class LoginActivity extends Activity {
 		
 		setContentView(R.layout.activity_login);
 		setupActionBar();
+		loginController.changeState(State.INITIALIZED);
 	}
 
 	/**
@@ -68,9 +77,13 @@ public class LoginActivity extends Activity {
 	public void setFocus(View focus){
 		focusView=focus;
 	}
+	public void finishLogin(UserCredentials userData){
+		this.userData=userData;
+		Intent resultIntent=new Intent();
+		resultIntent.putExtra(EXTRA_USER_EMAIL, this.userData.getEmail());
+		setResult(RESULT_OK, resultIntent);
+		finish();
+	}
 
-	
-
-	
 		
 }
