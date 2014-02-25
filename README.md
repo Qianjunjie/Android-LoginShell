@@ -2,8 +2,15 @@ Android-LoginShell
 ==================
 
 Application that contains a login activity intended for housing modules that require network communication.
+Currently accesses a local database generated at compile time.
+All(almost) android specific code is isolated to LoginView and LoginActivity.  
 
+Planned Functionality:
 
-This branch is a work in progress.  When finished, it will overwrite the contents of the master branch.
+-remote database access
 
-Compiles but contains no functionality ATM.  All the methods and logic are temporarily copied into the text docs.
+-token system or another way of verifying that login access has not expired.
+
+-automatically attempt to register user when email is not in database
+
+-integration with facebook/google
