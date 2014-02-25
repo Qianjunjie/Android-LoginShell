@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import edu.uh.honors.LoginShell.LoginController.State;
+import android.widget.Toast;
 
 
 /**
@@ -83,6 +84,10 @@ public class LoginActivity extends Activity {
 		resultIntent.putExtra(EXTRA_USER_EMAIL, this.userData.getEmail());
 		setResult(RESULT_OK, resultIntent);
 		finish();
+	}
+	public void showToast(String message){
+		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 
 		

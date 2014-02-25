@@ -1,7 +1,14 @@
 package edu.uh.honors.LoginShell;
 
-import edu.uh.honors.LoginShell.LoginController.State;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.os.AsyncTask;
+import android.widget.Toast;
+import edu.uh.honors.LoginShell.LoginController.State;
 
 
 /**
@@ -14,11 +21,15 @@ import android.os.AsyncTask;
  *
  */
 
-public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+public class UserLoginTask extends AsyncTask<Void, Void, String> {
 	
 	//Instance Variables
-	private String mEmail, mPassword;
+	private UserCredentials user;
 	private LoginController loginController;
+	private LoginActivity loginActivity;
+	private String url = "http://housuggest.org/appLogin/test/index.php";
+	private String response;
+	
 	
 	//Temporary data to be checked against
 	private static final String[] DUMMY_CREDENTIALS = new String[] {
@@ -27,17 +38,37 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 	private static final int DUMMY_TOKEN=12345;
 	
 	
-	public UserLoginTask(LoginController inLoginController, String email, String password){
+	public UserLoginTask(LoginController inLoginController, LoginActivity loginActivity, UserCredentials user){
 		super();
-		mEmail=email;
-		mPassword=password;
+		this.loginActivity=loginActivity;
 		loginController=inLoginController;
+		this.user=user;
 	}
 	
 	@Override
-	protected Boolean doInBackground(Void... params) {
+	protected String doInBackground(Void... params) {
 		// TODO: attempt authentication against a network service.
-		// TODO: retrieve access token from server
+		HttpClient client = new DefaultHttpClient();
+		HttpPost httppost;
+		
+		
+		//HttpResponse response;
+		
+		try {
+		  httppost=new HttpPost(url);
+		  //response=client.execute(httppost);
+		  ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		  response = client.execute(httppost, responseHandler);
+		  return response;
+		} catch(Exception e) {
+		  System.out.println("Exception : "+e.getMessage());
+		  loginController.changeState(State.FAILED);
+		  
+		}
+		
+		
+		
+		/*Contains code for validation against local data
 		try {
 			// Simulate network access.
 			Thread.sleep(2000);
@@ -52,19 +83,23 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 				return pieces[1].equals(mPassword);
 			}
 		}
+		*/
 
 		// TODO: register the new account here. Change below return to true when
 		//registration protocol has been implemented.
-		return false;
+		return response;
 	}
+
 	//TODO: Replace DUMMY ID/TOKEN with actual id received from server.
 	@Override
-	protected void onPostExecute(final Boolean success) {
-		if (success){
-			loginController.changeState(State.COMPLETE);
-		}
+	protected void onPostExecute(final String response) {
+		loginActivity.showToast(response);
+		loginController.changeState(State.COMPLETE);
+		
+	/*
 		else
 		loginController.changeState(State.FAILED);
+	*/
 	}
 
 	@Override
@@ -72,6 +107,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		loginController.changeState(State.CANCELED);
 	}
 }
+
 	
 	
 	

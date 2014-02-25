@@ -110,7 +110,7 @@ public class LoginController {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user authentication attempt.
 			loginView.loginAnimationBegin();
-			mAuthTask = new UserLoginTask(this, loginData.getEmail(), loginData.getPassword());
+			mAuthTask = new UserLoginTask(this,  loginActivity, loginData);
 			mAuthTask.execute((Void) null);
 		}
 
@@ -125,13 +125,14 @@ public class LoginController {
 	 void proccessResult(boolean success){
 		mAuthTask = null;
 		loginView.showProgress(false);
-
+		
 		if (success) {
 			loginActivity.finishLogin(loginData);
 		} else {
 			loginView.passwordIncorrectError();
 		
 		}
+		
 	}
 	
 
