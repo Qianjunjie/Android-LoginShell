@@ -1,13 +1,17 @@
 package edu.uh.honors.LoginShell;
 
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 import edu.uh.honors.LoginShell.LoginController.State;
 
 
@@ -29,14 +33,15 @@ public class UserLoginTask extends AsyncTask<Void, Void, String> {
 	private LoginActivity loginActivity;
 	private String url = "http://housuggest.org/appLogin/test/index.php";
 	private String response;
+	private ArrayList<NameValuePair> nameValuePairs=new ArrayList<NameValuePair>(2);
 	
-	
+	/*
 	//Temporary data to be checked against
 	private static final String[] DUMMY_CREDENTIALS = new String[] {
 		"user@example.com:password", "bar@example.com:world" };
 	private static final String DUMMY_ACCESS_ID= new String("55555");
 	private static final int DUMMY_TOKEN=12345;
-	
+	*/
 	
 	public UserLoginTask(LoginController inLoginController, LoginActivity loginActivity, UserCredentials user){
 		super();
@@ -56,13 +61,18 @@ public class UserLoginTask extends AsyncTask<Void, Void, String> {
 		
 		try {
 		  httppost=new HttpPost(url);
-		  //response=client.execute(httppost);
+		  //load values into an arraylist and attach the arraylist to the httppost
+		  //nameValuePairs.add(new BasicNameValuePair("username", user.getEmail()));
+		  //nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
+		  //httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		  
 		  ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		  response = client.execute(httppost, responseHandler);
 		  return response;
 		} catch(Exception e) {
 		  System.out.println("Exception : "+e.getMessage());
-		  loginController.changeState(State.FAILED);
+		  response=e.getMessage();
+		  
 		  
 		}
 		
@@ -94,12 +104,12 @@ public class UserLoginTask extends AsyncTask<Void, Void, String> {
 	@Override
 	protected void onPostExecute(final String response) {
 		loginActivity.showToast(response);
+		if(response.equals("User Found"))
 		loginController.changeState(State.COMPLETE);
-		
-	/*
-		else
-		loginController.changeState(State.FAILED);
-	*/
+		else if(response.equals("No Such User Found"))
+				loginController.changeState(State.FAILED);
+		else loginController.changeState(State.ERROR);
+	
 	}
 
 	@Override

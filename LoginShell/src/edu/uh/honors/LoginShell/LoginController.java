@@ -7,7 +7,7 @@ public class LoginController {
 	private UserCredentials loginData= new UserCredentials();
 	private LoginView loginView;
 	private LoginActivity loginActivity;
-	public enum State{UNINITIALIZED, INITIALIZED, SUBMIT_CLICK, COMPLETE, CANCELED, FAILED};
+	public enum State{UNINITIALIZED, INITIALIZED, SUBMIT_CLICK, COMPLETE, CANCELED, FAILED, ERROR};
 	private State mState=State.UNINITIALIZED;
 	
 
@@ -60,8 +60,14 @@ public class LoginController {
 			loginView.showProgress(false);
 			break;
 		}
+		case ERROR:
+		{
+			mAuthTask=null;
+			loginView.showProgress(false);
+			break;
 		}
 	}
+}
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
