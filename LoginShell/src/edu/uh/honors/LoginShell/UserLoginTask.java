@@ -52,6 +52,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, String> {
 	
 	@Override
 	protected String doInBackground(Void... params) {
+		System.out.print(user.getPassword());
 		// TODO: attempt authentication against a network service.
 		HttpClient client = new DefaultHttpClient();
 		HttpPost httppost;
@@ -62,9 +63,9 @@ public class UserLoginTask extends AsyncTask<Void, Void, String> {
 		try {
 		  httppost=new HttpPost(url);
 		  //load values into an arraylist and attach the arraylist to the httppost
-		  //nameValuePairs.add(new BasicNameValuePair("username", user.getEmail()));
-		  //nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
-		  //httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		  nameValuePairs.add(new BasicNameValuePair("username", user.getEmail()));
+		  nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
+		  httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		  
 		  ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		  response = client.execute(httppost, responseHandler);
